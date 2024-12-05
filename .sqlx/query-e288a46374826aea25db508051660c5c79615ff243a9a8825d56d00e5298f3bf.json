@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "DELETE FROM posted_urls WHERE url = ?",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": []
+  },
+  "hash": "e288a46374826aea25db508051660c5c79615ff243a9a8825d56d00e5298f3bf"
+}
