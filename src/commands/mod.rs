@@ -1,15 +1,12 @@
-mod database;
 mod start;
 
+use anyhow::{Context, Result};
+use clap::Parser;
+use start::StartCommand;
 use std::{
     fs::{create_dir_all, exists},
     path::PathBuf,
 };
-
-use anyhow::{Context, Result};
-use clap::Parser;
-use database::DatabaseCommandBase;
-use start::StartCommand;
 
 #[derive(Debug)]
 pub struct GlobalArguments {
@@ -31,8 +28,8 @@ pub struct CommandRoot {
     /// The base directory to store things like configuration files and other persistent data.
     #[arg(
         long = "data-path",
-        env = "DATA_PATH",
-        default_value = dirs::config_local_dir().unwrap().join("skywrite").into_os_string(),
+        env = "WHIMSKY_DATA_PATH",
+        default_value = dirs::config_local_dir().unwrap().join("whimsky").into_os_string(),
         global = true
     )]
     data_path: PathBuf,
@@ -42,7 +39,7 @@ pub struct CommandRoot {
     #[arg(
         long = "database-url",
         env = "DATABASE_URL",
-        default_value = format!("sqlite://{}?mode=rwc", dirs::config_local_dir().unwrap().join("skywrite").join("db.sqlite3").to_str().unwrap()),
+        default_value = format!("sqlite://{}?mode=rwc", dirs::config_local_dir().unwrap().join("whimsky").join("db.sqlite3").to_str().unwrap()),
         global = true
     )]
     database_url: String,
@@ -51,7 +48,6 @@ pub struct CommandRoot {
 #[derive(Debug, Parser)]
 enum Commands {
     Start(Box<StartCommand>),
-    Database(DatabaseCommandBase),
 }
 
 impl CommandRoot {
@@ -66,7 +62,6 @@ impl CommandRoot {
         };
         match self.command {
             Commands::Start(cmd) => cmd.run(global_args).await,
-            Commands::Database(cmd) => cmd.run(global_args).await,
         }
     }
 }

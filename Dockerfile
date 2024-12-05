@@ -1,7 +1,7 @@
 ###########
 # Builder #
 ###########
-FROM rust:alpine AS builder 
+FROM rust:alpine AS builder
 WORKDIR /build
 
 # Install build dependencies
@@ -25,13 +25,13 @@ RUN cargo build --release
 # Runtime #
 ###########
 FROM alpine
-RUN adduser -S -s /bin/false -D skywrite
-USER skywrite
-WORKDIR /opt/skywrite
-RUN mkdir /opt/skywrite/data
+RUN adduser -S -s /bin/false -D whimsky
+USER whimsky
+WORKDIR /opt/whimsky
+RUN mkdir /opt/whimsky/data
 
 ENV RUST_BACKTRACE=1
-ENV DATABASE_URL=sqlite:///opt/skywrite/data/db.sqlite3?mode=rwc
-ENV DATA_PATH=/opt/skywrite/data
-COPY --from=builder /build/target/release/skywrite /usr/local/bin/skywrite
-ENTRYPOINT ["/usr/local/bin/skywrite", "start"]
+ENV DATABASE_URL=sqlite:///opt/whimsky/data/db.sqlite3?mode=rwc
+ENV DATA_PATH=/opt/whimsky/data
+COPY --from=builder /build/target/release/whimsky /usr/local/bin/whimsky
+ENTRYPOINT ["/usr/local/bin/whimsky", "start"]

@@ -15,9 +15,16 @@ use bsky_sdk::{
     BskyAgent,
 };
 use chrono::{DateTime, Utc};
-use log::{debug, info};
+use image::{imageops::FilterType, ImageFormat, ImageReader};
 use reqwest::Url;
-use std::{path::PathBuf, str::FromStr};
+use std::{io::Cursor, path::PathBuf, str::FromStr};
+use tracing::{debug, info};
+
+pub struct BlueskyHandler {
+    pub agent: BskyAgent,
+    pub data_path: PathBuf,
+    pub disable_comments: bool,
+}
 
 #[derive(Debug)]
 pub struct PostData {
@@ -33,12 +40,6 @@ pub struct PostEmbed {
     pub description: String,
     pub uri: Url,
     pub thumbnail_url: Option<Url>,
-}
-
-pub struct BlueskyHandler {
-    pub agent: BskyAgent,
-    pub data_path: PathBuf,
-    pub disable_comments: bool,
 }
 
 impl BlueskyHandler {
@@ -207,14 +208,15 @@ impl BlueskyHandler {
         let thumb = if let Some(data) = thumbnail_url {
             debug!("Fetching and uploading image blob data for '{uri}'");
             let image_bytes = reqwest::get(data).await?.bytes().await?;
-            let output = self
-                .agent
-                .api
-                .com
-                .atproto
-                .repo
-                .upload_blob(image_bytes.to_vec())
-                .await?;
+            let mut buf: Vec<u8> = vec![];
+            // The news site likes to make their covers 1920x1080 which is too big for Bluesky.
+            // Here they are downscaled and reformatted to be more efficient.
+            ImageReader::new(Cursor::new(image_bytes))
+                .with_guessed_format()?
+                .decode()?
+                .resize(960, 540, FilterType::Nearest)
+                .write_to(&mut Cursor::new(&mut buf), ImageFormat::WebP)?;
+            let output = self.agent.api.com.atproto.repo.upload_blob(buf).await?;
             Some(output.data.blob)
         } else {
             None

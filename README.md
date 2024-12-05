@@ -1,11 +1,11 @@
-# Skywrite
+# Whimsky
 
 > [!IMPORTANT]
 > This project will break release-to-release until stablised! There is no
 > promise of stability or compatibility between versions until v1. You have been
 > warned.
 
-A simple RSS feed subscriber -> Bluesky post bot.
+ Automatic posting Infinity Nikki news to Bluesky.
 
 ## Features
 
@@ -25,8 +25,8 @@ A simple RSS feed subscriber -> Bluesky post bot.
 
 ```yml
 services:
-  skywrite:
-    image: ghcr.io/blooym/skywrite
+  whimsky:
+    image: ghcr.io/blooym/whimsky
     restart: unless-stopped
     environment:
       - APP_SERVICE=
@@ -38,10 +38,10 @@ services:
       - POST_LANGUAGES=
       - DISABLE_POST_COMMENTS=
     volumes:
-      - skywrite-data:/opt/skywrite/data
+      - whimsky-data:/opt/whimsky/data
 
 volumes:
-  skywrite-data:
+  whimsky-data:
 ```
 
 2. Start the stack
@@ -57,7 +57,7 @@ docker compose up -d
 2. Install the project binary
 
 ```
-cargo install --git https://github.com/Blooym/skywrite.git
+cargo install --git https://github.com/Blooym/whimsky.git
 ```
 
 3. Copy `.env.example` to `.env` and fill in the values as necessary.
@@ -67,7 +67,7 @@ cargo install --git https://github.com/Blooym/skywrite.git
 4. Run the project from the same directory as `.env`
 
 ```
-skywrite start
+whimsky start
 ```
 
 ## Configuration

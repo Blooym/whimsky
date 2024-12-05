@@ -1,7 +1,7 @@
 mod bsky;
 mod commands;
 mod database;
-mod rss;
+mod fetcher;
 
 use anyhow::Result;
 use clap::Parser;
