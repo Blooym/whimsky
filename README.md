@@ -1,18 +1,6 @@
 # Whimsky
 
-> [!IMPORTANT]
-> This project will break release-to-release until stablised! There is no
-> promise of stability or compatibility between versions until v1. You have been
-> warned.
-
  Automatic posting Infinity Nikki news to Bluesky.
-
-## Features
-
-- Post multiple feeds to a single account.
-- Automatically backdated posts fetched X hours from before bot startup.
-- Duplicate post detection via URL stored in persistent database.
-- Link embedding with image support.
 
 ## Setup
 
@@ -29,14 +17,14 @@ services:
     image: ghcr.io/blooym/whimsky
     restart: unless-stopped
     environment:
-      - APP_SERVICE=
-      - APP_IDENTIFIER=
-      - APP_PASSWORD=
-      - RSS_FEED_URLS=
-      - RERUN_INTERVAL_SECONDS=
-      - RSS_FEED_BACKDATE_HOURS=
-      - POST_LANGUAGES=
-      - DISABLE_POST_COMMENTS=
+      - WHIMSKY_APP_SERVICE=
+      - WHIMSKY_APP_IDENTIFIER=
+      - WHIMSKY_APP_PASSWORD=
+      - WHIMSKY_NEWS_LOCALE=
+      - WHIMSKY_RERUN_INTERVAL_SECONDS=
+      - WHIMSKY_NEWS_BACKDATE_HOURS=72=
+      - WHIMSKY_POST_LANGUAGES=
+      - WHIMSKY_DISABLE_POST_COMMENTS=
     volumes:
       - whimsky-data:/opt/whimsky/data
 
@@ -75,22 +63,19 @@ whimsky start
 Configuration is handled entirely through environment variables or command-line
 flags. The available configuration options for the 'start' command are:
 
-- `APP_SERVICE`: The full URL to the service to communicate with. Defaults to
-  `https://bsky.social`
-- `APP_IDENTIFIER`: The username or email of the application's account.
-- `APP_PASSWORD`: The app password to use for authentication.
-- `DATA_PATH`: The base directory to store things like configuration files and
-  other persistent data.
 - `DATABASE_URL`: The connection string to use when connecting to the sqlite
   database. Supports some connection parameters.
-- `RERUN_INTERVAL_SECONDS`: The interval of time in seconds between checking for
+- `WHIMSKY_APP_SERVICE`: The full URL to the service to communicate with. Defaults to
+  `https://bsky.social`
+- `WHIMSKY_APP_IDENTIFIER`: The username or email of the application's account.
+- `WHIMSKY_APP_PASSWORD`: The app password to use for authentication.
+- `WHIMSKY_DATA_PATH`: The base directory to store things like configuration files and
+  other persistent data.
+- `WHIMSKY_RERUN_INTERVAL_SECONDS`: The interval of time in seconds between checking for
   new posts.
-- `RSS_FEED_BACKDATE_HOURS`: The number of hours in the past the bot should
-  check for posts that haven't been posted at startup. Useful for backdating an
-  account or when an outage occurs.
-- `RSS_FEED_URLS`: A comma-seperated list of URLs pointing directly to RSS
-  feeds.
-- `DISABLE_POST_COMMENTS`: Whether Bluesky posts should have comments disabled.
-- `POST_LANGUAGES`: A comma-seperated list of languages in **ISO-639-1** to
+- `WHIMSKY_NEWS_BACKDATE_HOURS=72`:  The number of hours in the past the bot should check for news that hasn't been posted. It is recommended to keep this to at least "1" as otherwise posts may get missed.
+- `WHIMSKY_NEWS_LOCALE`: The locale to use when fetching news posts. Existing options so far appear to be "en", "kr" and "ja".
+- `WHIMSKY_DISABLE_POST_COMMENTS`: Whether Bluesky posts should have comments disabled.
+- `WHIMSKY_POST_LANGUAGES`: A comma-seperated list of languages in **ISO-639-1** to
   classify posts under. This should corrolate to the language of the posts the
   feed is linking to.
