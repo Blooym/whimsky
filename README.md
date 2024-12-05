@@ -71,8 +71,7 @@ flags. The available configuration options for the 'start' command are:
 - `WHIMSKY_APP_PASSWORD`: The app password to use for authentication.
 - `WHIMSKY_DATA_PATH`: The base directory to store things like configuration files and
   other persistent data.
-- `WHIMSKY_RERUN_INTERVAL_SECONDS`: The interval of time in seconds between checking for
-  new posts.
+- `WHIMSKY_RERUN_INTERVAL_SECONDS`: The interval of time in seconds between checking for news.
 - `WHIMSKY_NEWS_BACKDATE_HOURS=72`:  The number of hours in the past the bot should check for news that hasn't been posted. It is recommended to keep this to at least "1" as otherwise posts may get missed.
 - `WHIMSKY_NEWS_LOCALE`: The locale to use when fetching news posts. Existing options so far appear to be "en", "kr" and "ja".
 - `WHIMSKY_DISABLE_POST_COMMENTS`: Whether Bluesky posts should have comments disabled.
