@@ -5,7 +5,6 @@ use reqwest::Url;
 use serde::Deserialize;
 use tracing::debug;
 
-#[derive(Debug)]
 pub struct NikkiNewsFetcher<'a> {
     filter_date: chrono::DateTime<Utc>,
     database: &'a Database,
@@ -38,7 +37,6 @@ pub struct NikkiNewsDataInner {
     pub r#abstract: String,
 }
 
-#[derive(Debug)]
 pub struct NikkiNewsPost {
     pub url: Url,
     pub title: String,
@@ -77,12 +75,13 @@ impl<'a> NikkiNewsFetcher<'a> {
     }
 
     pub async fn fetch_unposted(&mut self) -> Result<Vec<NikkiNewsPost>> {
-        let content = reqwest::get(self.news_url.as_str())
+        let mut content = reqwest::get(self.news_url.as_str())
             .await
             .unwrap()
             .json::<NikkiNewsResponse>()
             .await
             .unwrap();
+        content.data.data.sort_by_key(|f| f.id);
 
         let mut posts = vec![];
         for item in content.data.data {
