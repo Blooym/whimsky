@@ -65,7 +65,6 @@ pub struct StartCommand {
     ///
     /// Existing options so far appear to be "en", "kr" and "ja".
     #[clap(
-        required = true,
         default_value = "en",
         long = "news-locale",
         env = "WHIMSKY_NEWS_LOCALE",
@@ -76,7 +75,6 @@ pub struct StartCommand {
     /// A comma-seperated list of languages in ISO-639-1 format to classify posts under.
     /// This should corrolate to the language of the posts the feed is linking to.
     #[clap(
-        required = true,
         default_value = "en",
         long = "post-languages",
         env = "WHIMSKY_POST_LANGUAGES",
