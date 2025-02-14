@@ -99,10 +99,10 @@ impl<'a> NikkiNewsFetcher<'a> {
             }
 
             posts.push(NikkiNewsPost {
-                r#abstract: item.r#abstract,
+                r#abstract: item.r#abstract.trim().to_string(),
                 cover: item.cover,
                 publish_time: item.publish_time,
-                title: item.title,
+                title: item.title.trim().to_string(),
                 url: link,
             });
         }
