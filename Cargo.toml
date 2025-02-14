@@ -3,7 +3,7 @@ name = "whimsky"
 authors = ["Blooym"]
 repository = "https://github.com/Blooym/whimsky"
 description = "Automatic posting Infinity Nikki news to Bluesky."
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 
 [dependencies]
