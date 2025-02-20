@@ -106,7 +106,7 @@ impl ExecutableCommand for StartCommand {
                 news_fetcher.get_news_url()
             );
 
-            if let Ok(posts) = news_fetcher.fetch_unposted().await {
+            match news_fetcher.fetch_unposted().await { Ok(posts) => {
                 for post in posts {
                     info!("Running for post '{}'", post.url);
 
@@ -129,12 +129,12 @@ impl ExecutableCommand for StartCommand {
                 if let Err(err) = database.remove_old_stored_posts().await {
                     warn!("Failed to run query to remove old stored posts {err}");
                 }
-            } else {
+            } _ => {
                 error!(
                     "Failed to fetch news from {}: skipping for this iteration",
                     news_fetcher.get_news_url()
                 );
-            };
+            }};
             info!(
                 "Now waiting for {} seconds before re-running",
                 self.run_interval_seconds
