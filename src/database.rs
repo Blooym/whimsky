@@ -1,5 +1,5 @@
 use anyhow::Result;
-use sqlx::{migrate, query, SqlitePool};
+use sqlx::{SqlitePool, migrate, query};
 use tracing::debug;
 
 pub struct Database {

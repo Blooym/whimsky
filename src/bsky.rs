@@ -1,5 +1,6 @@
 use anyhow::{Context, Result};
 use bsky_sdk::{
+    BskyAgent,
     agent::config::{Config, FileStore},
     api::{
         app::bsky::{
@@ -7,15 +8,14 @@ use bsky_sdk::{
             feed::post::{self, RecordEmbedRefs},
         },
         types::{
-            string::{Datetime, Language},
             Collection, TryIntoUnknown, Union,
+            string::{Datetime, Language},
         },
     },
     rich_text::RichText,
-    BskyAgent,
 };
 use chrono::{DateTime, Utc};
-use image::{imageops::FilterType, ImageFormat, ImageReader};
+use image::{ImageFormat, ImageReader, imageops::FilterType};
 use reqwest::Url;
 use std::{io::Cursor, path::PathBuf, str::FromStr};
 use tracing::{debug, info};

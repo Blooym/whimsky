@@ -106,35 +106,38 @@ impl ExecutableCommand for StartCommand {
                 news_fetcher.get_news_url()
             );
 
-            match news_fetcher.fetch_unposted().await { Ok(posts) => {
-                for post in posts {
-                    info!("Running for post '{}'", post.url);
+            match news_fetcher.fetch_unposted().await {
+                Ok(posts) => {
+                    for post in posts {
+                        info!("Running for post '{}'", post.url);
 
-                    let post_data = {
-                        PostData {
-                            created_at: post.publish_time,
-                            text: format!("{} - {}", post.title, post.url),
-                            languages: self.post_languages.clone(),
-                            embed: Some(PostEmbed {
-                                title: post.title,
-                                description: post.r#abstract,
-                                thumbnail_url: Some(post.cover),
-                                uri: post.url.clone(),
-                            }),
-                        }
-                    };
-                    bsky_handler.post(post_data).await.unwrap();
-                    database.add_posted_url(post.url.as_str()).await.unwrap();
+                        let post_data = {
+                            PostData {
+                                created_at: post.publish_time,
+                                text: format!("{} - {}", post.title, post.url),
+                                languages: self.post_languages.clone(),
+                                embed: Some(PostEmbed {
+                                    title: post.title,
+                                    description: post.r#abstract,
+                                    thumbnail_url: Some(post.cover),
+                                    uri: post.url.clone(),
+                                }),
+                            }
+                        };
+                        bsky_handler.post(post_data).await.unwrap();
+                        database.add_posted_url(post.url.as_str()).await.unwrap();
+                    }
+                    if let Err(err) = database.remove_old_stored_posts().await {
+                        warn!("Failed to run query to remove old stored posts {err}");
+                    }
                 }
-                if let Err(err) = database.remove_old_stored_posts().await {
-                    warn!("Failed to run query to remove old stored posts {err}");
+                _ => {
+                    error!(
+                        "Failed to fetch news from {}: skipping for this iteration",
+                        news_fetcher.get_news_url()
+                    );
                 }
-            } _ => {
-                error!(
-                    "Failed to fetch news from {}: skipping for this iteration",
-                    news_fetcher.get_news_url()
-                );
-            }};
+            };
             info!(
                 "Now waiting for {} seconds before re-running",
                 self.run_interval_seconds
