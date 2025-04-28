@@ -1,6 +1,6 @@
 # Whimsky
 
- Automatic posting Infinity Nikki news to Bluesky.
+ Automatic posting Infinity Nikki news to Bluesky. Customized fork of [skywrite](https://github.com/Blooym/skywrite).
 
 ## Setup
 
