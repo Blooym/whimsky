@@ -3,17 +3,23 @@ name: "Tests"
 on:
   push:
     branches: ["main"]
-    paths:
+    paths: 
       - "src/**"
-      - "Crate.toml"
-      - "Crate.lock"
+      - "migrations/**"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "build.rs"
+      - ".sqlx/**"
   pull_request:
     branches: ["main"]
     types: [ready_for_review, opened, synchronize]
-    paths:
+    paths: 
       - "src/**"
+      - "migrations/**"
       - "Cargo.toml"
       - "Cargo.lock"
+      - "build.rs"
+      - ".sqlx/**"
   workflow_dispatch:
 
 concurrency:

@@ -4,6 +4,40 @@
 
 ## Setup
 
+### Docker
+
+1. Copy the following to a local file named `docker-compose.yml` or add the
+   service to your existing stack and fill in the environment variables.
+   Information about configuration options can be found in the
+   [configuration](#configuration) section.
+
+```yml
+services:
+  whimsky:
+    image: ghcr.io/blooym/whimsky:latest
+    restart: unless-stopped
+    environment:
+      - WHIMSKY_APP_SERVICE=
+      - WHIMSKY_APP_IDENTIFIER=
+      - WHIMSKY_APP_PASSWORD=
+      - WHIMSKY_NEWS_LOCALE=
+      - WHIMSKY_RERUN_INTERVAL_SECONDS=
+      - WHIMSKY_NEWS_BACKDATE_HOURS=72=
+      - WHIMSKY_POST_LANGUAGES=
+      - WHIMSKY_DISABLE_POST_COMMENTS=
+    volumes:
+      - whimsky-data:/opt/whimsky/data
+
+volumes:
+  whimsky-data:
+```
+
+2. Start the stack
+
+```
+docker compose up -d
+```
+
 ### Manual
 
 1. Ensure you have [Rust](https://www.rust-lang.org/tools/install) installed and
