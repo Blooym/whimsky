@@ -14,7 +14,7 @@
 ```yml
 services:
   whimsky:
-    image: ghcr.io/blooym/whimsky:latest
+    image: ghcr.io/blooym/whimsky:main
     restart: unless-stopped
     environment:
       - WHIMSKY_APP_SERVICE=
