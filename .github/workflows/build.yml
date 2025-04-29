@@ -65,3 +65,11 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Cleanup old images
+        uses: vlaurin/action-ghcr-prune@0cf7d39f88546edd31965acba78cdcb0be14d641
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          container: whimsky
+          keep-younger-than: 7
+          prune-untagged: true
