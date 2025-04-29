@@ -76,12 +76,12 @@ impl<'a> NikkiNewsFetcher<'a> {
 
     pub async fn fetch_unposted(&mut self) -> Result<Vec<NikkiNewsPost>> {
         let mut content = reqwest::get(self.news_url.as_str())
-            .await
-            .unwrap()
+            .await?
             .json::<NikkiNewsResponse>()
-            .await
-            .unwrap();
-        content.data.data.sort_by_key(|f| f.id);
+            .await?;
+        content.data.data.dedup_by_key(|k| k.id);
+        content.data.data.sort_by_key(|k| k.id);
+        content.data.data.reverse();
 
         let mut posts = vec![];
         for item in content.data.data {

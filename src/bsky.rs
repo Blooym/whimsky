@@ -9,7 +9,7 @@ use bsky_sdk::{
         },
         types::{
             Collection, TryIntoUnknown, Union,
-            string::{Datetime, Language},
+            string::{Datetime, Language, RecordKey},
         },
     },
     rich_text::RichText,
@@ -125,8 +125,7 @@ impl BlueskyHandler {
                     data.uri.as_ref(),
                     data.thumbnail_url,
                 )
-                .await
-                .unwrap(),
+                .await?,
             ),
             None => None,
         };
@@ -157,11 +156,10 @@ impl BlueskyHandler {
                 "Disabling post comments via threadgate for '{}'",
                 record.uri
             );
+            let rkey = record.uri.rsplit_once('/').map(|(_, rkey)| {
+                RecordKey::from_str(rkey).expect("record key from post should always be vlaid")
+            });
 
-            let rkey = record
-                .uri
-                .rsplit_once('/')
-                .map(|(_, rkey)| rkey.to_string());
             self.agent
                 .api
                 .com
@@ -209,13 +207,11 @@ impl BlueskyHandler {
             debug!("Fetching and uploading image blob data for '{uri}'");
             let image_bytes = reqwest::get(data).await?.bytes().await?;
             let mut buf: Vec<u8> = vec![];
-            // The news site likes to make their covers 1920x1080 which is too big for Bluesky.
-            // Here they are downscaled and reformatted to be more efficient.
             ImageReader::new(Cursor::new(image_bytes))
                 .with_guessed_format()?
                 .decode()?
                 .resize(960, 540, FilterType::Nearest)
-                .write_to(&mut Cursor::new(&mut buf), ImageFormat::WebP)?;
+                .write_to(&mut Cursor::new(&mut buf), ImageFormat::Jpeg)?;
             let output = self.agent.api.com.atproto.repo.upload_blob(buf).await?;
             Some(output.data.blob)
         } else {

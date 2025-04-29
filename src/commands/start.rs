@@ -100,7 +100,7 @@ impl ExecutableCommand for StartCommand {
             Duration::hours(self.news_backdate_hours as i64),
         );
         loop {
-            bsky_handler.sync_session().await.unwrap();
+            bsky_handler.sync_session().await?;
             info!(
                 "Checking for unposted entries for news url {}",
                 news_fetcher.get_news_url()
@@ -124,8 +124,8 @@ impl ExecutableCommand for StartCommand {
                                 }),
                             }
                         };
-                        bsky_handler.post(post_data).await.unwrap();
-                        database.add_posted_url(post.url.as_str()).await.unwrap();
+                        bsky_handler.post(post_data).await?;
+                        database.add_posted_url(post.url.as_str()).await?;
                     }
                     if let Err(err) = database.remove_old_stored_posts().await {
                         warn!("Failed to run query to remove old stored posts {err}");
