@@ -203,20 +203,29 @@ impl BlueskyHandler {
         thumbnail_url: Option<Url>,
     ) -> Result<Union<RecordEmbedRefs>> {
         info!("Constructing external embed data for: '{uri}'");
+
         let thumb = if let Some(data) = thumbnail_url {
             debug!("Fetching and uploading image blob data for '{uri}'");
             let image_bytes = reqwest::get(data).await?.bytes().await?;
-            let mut buf: Vec<u8> = vec![];
-            ImageReader::new(Cursor::new(image_bytes))
-                .with_guessed_format()?
-                .decode()?
-                .resize(960, 540, FilterType::Nearest)
-                .write_to(&mut Cursor::new(&mut buf), ImageFormat::Jpeg)?;
+            let buf = (|| -> Result<Vec<u8>> {
+                let mut buf: Vec<u8> = vec![];
+                ImageReader::new(Cursor::new(&image_bytes))
+                    .with_guessed_format()?
+                    .decode()?
+                    .resize(960, 540, FilterType::Nearest)
+                    .write_to(&mut Cursor::new(&mut buf), ImageFormat::Jpeg)?;
+                Ok(buf)
+            })()
+            .unwrap_or_else(|err| {
+                debug!("Failed to convert image data: {err} - using original bytes");
+                image_bytes.to_vec()
+            });
             let output = self.agent.api.com.atproto.repo.upload_blob(buf).await?;
             Some(output.data.blob)
         } else {
             None
         };
+
         Ok(Union::Refs(RecordEmbedRefs::AppBskyEmbedExternalMain(
             Box::new(
                 MainData {
